@@ -1,3 +1,6 @@
-# STM32_MAX7219_SPI
-Library for 7 segmented LED display STM32 MAX7219 SPI
-https://stm32withoutfear.blogspot.com/2019/06/stm32-7segments-8digits-max7219-spi.html
+# stm32-max7219
+
+STM32 driver for 7 segmented LED displays based on MAX7219.
+
+The code is based on [taburyak/STM32_MAX7219_SPI](https://github.com/taburyak/STM32_MAX7219_SPI) library
+developed by Andriy Honcharenko ( [@taburyak](https://github.com/taburyak) ) in 2019.
