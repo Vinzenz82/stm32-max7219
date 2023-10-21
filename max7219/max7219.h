@@ -3,12 +3,24 @@
 #define MAX7219_H_
 
 #include "stdbool.h"
+#include "stdint.h"
+
+// #define TM1638_PLATFORM_STM32        // HAL Functions
+#define TM1638_PLATFORM_STM32_LL        // LL Functions
 
 #define NUMBER_OF_DIGITS      8
-#define SPI_PORT              hspi1
-extern SPI_HandleTypeDef      SPI_PORT;
+
+#if defined( TM1638_PLATFORM_STM32 )
 #define MAX7219_CS_Pin        GPIO_PIN_6
 #define MAX7219_CS_GPIO_Port  GPIOA
+extern SPI_HandleTypeDef      SPI_PORT;
+#define SPI_PORT              hspi1
+#elif defined( TM1638_PLATFORM_STM32_LL )
+#define MAX7219_CS_Pin  LL_GPIO_PIN_1
+#define MAX7219_CS_GPIO_Port GPIOB
+#define SPI_PORT              SPI2
+#endif
+
 
 typedef enum {
     MAX7219_SEG_G = (1<<0),
@@ -58,10 +70,53 @@ typedef enum {
     MAX7219_SYM_BLANK = 0x00,
 } MAX7219_SYMBOLS;
 
+typedef struct MAX7219_MODULE_ROW_t
+{
+    union{
+        struct{
+            uint8_t Led1:1;
+            uint8_t Led2:1;
+            uint8_t Led3:1;
+            uint8_t Led4:1;
+            uint8_t Led5:1;
+            uint8_t Led6:1;
+            uint8_t Led7:1;
+            uint8_t Led8:1;
+        };
+        uint8_t raw;
+    };
+} MAX7219_MODULE_ROW_st;
+
+typedef struct MAX7219_MODULE_t
+{
+    union{
+        struct{
+            MAX7219_MODULE_ROW_st Row1;
+            MAX7219_MODULE_ROW_st Row2;
+            MAX7219_MODULE_ROW_st Row3;
+            MAX7219_MODULE_ROW_st Row4;
+            MAX7219_MODULE_ROW_st Row5;
+            MAX7219_MODULE_ROW_st Row6;
+            MAX7219_MODULE_ROW_st Row7;
+            MAX7219_MODULE_ROW_st Row8;
+        };
+        MAX7219_MODULE_ROW_st raw[8];
+    };    
+} MAX7219_MODULE_st;
+
+typedef struct MAX7219_ARRAY_t
+{
+    MAX7219_MODULE_st Unit[4];
+} MAX7219_ARRAY_st;
+
 void max7219_Init();
 void max7219_SetIntensivity(uint8_t intensivity);
 void max7219_Clean(void);
 void max7219_SendData(uint8_t addr, uint8_t data);
+
+void max7219_SetBuffer(MAX7219_ARRAY_st newBuffer);
+void max7219_DisplayBuffer(void);
+
 void max7219_TurnOn(void);
 void max7219_TurnOff(void);
 
