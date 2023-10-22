@@ -1,6 +1,7 @@
 // vim: set ai et ts=4 sw=4:
 
 #include <max7219.h>
+#include <max7219_font.h>
 
 // change for your MCU
 #if defined( TM1638_PLATFORM_STM32 )
@@ -100,6 +101,20 @@ void max7219_SendData(uint8_t addr, uint8_t data) {
 #endif
 }
 
+void max7219_SendDataNoCs(uint8_t addr, uint8_t data) {
+    
+
+#if defined(TM1638_PLATFORM_STM32)
+    HAL_SPI_Transmit(&hspi1, &addr, 1, HAL_MAX_DELAY);
+    HAL_SPI_Transmit(&hspi1, &data, 1, HAL_MAX_DELAY);
+#elif defined(TM1638_PLATFORM_STM32_LL)
+    // Send bytes over the SPI
+    LL_SPI_TransmitData16(SPI_PORT,(data<<8) + addr);
+    // Wait until the transmission is complete
+    while( LL_SPI_IsActiveFlag_BSY(SPI_PORT) ){__NOP();/*LL_mDelay(1);*/};
+#endif
+}
+
 void max7219_SetBuffer(MAX7219_ARRAY_st newBuffer)
 {
     buffer = newBuffer;
@@ -108,12 +123,18 @@ void max7219_SetBuffer(MAX7219_ARRAY_st newBuffer)
 void max7219_DisplayBuffer(void)
 {
     uint8_t i = 0, col = 1;
-    
+    LL_SPI_Enable(SPI_PORT);
+
     for(col = 1; col < 9; col++) {
-        for(i = 3; i<4; i++) {
-            max7219_SendData(col, buffer.Unit[i].raw[col-1].raw); 
+        LL_GPIO_ResetOutputPin(MAX7219_CS_GPIO_Port, MAX7219_CS_Pin);
+        for(i = 0; i<4; i++) {
+            
+            max7219_SendDataNoCs(col, buffer.Unit[i].raw[col-1].raw); 
+            
         }
+        LL_GPIO_SetOutputPin(MAX7219_CS_GPIO_Port, MAX7219_CS_Pin);
     }
+    LL_SPI_Disable(SPI_PORT);
 }
 
 void max7219_TurnOn(void) {    
