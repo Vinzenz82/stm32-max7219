@@ -127,7 +127,7 @@ void max7219_DisplayBuffer(void)
 
     for(col = 1; col < 9; col++) {
         LL_GPIO_ResetOutputPin(MAX7219_CS_GPIO_Port, MAX7219_CS_Pin);
-        for(i = 0; i<4; i++) {
+        for(i = 3; i<7; i++) { //0-4
             
             max7219_SendDataNoCs(col, buffer.Unit[i].raw[col-1].raw); 
             

@@ -106,8 +106,13 @@ typedef struct MAX7219_MODULE_t
 
 typedef struct MAX7219_ARRAY_t
 {
-    MAX7219_MODULE_st Unit[4];
+    MAX7219_MODULE_st Unit[8];
 } MAX7219_ARRAY_st;
+
+typedef struct MAX7219_SCREEN_BUFFER_t
+{
+    uint8_t buff[8][8]; //row : unit
+} MAX7219_SCREEN_BUFFER_st;
 
 void max7219_Init();
 void max7219_SetIntensivity(uint8_t intensivity);
