@@ -114,6 +114,13 @@ typedef struct MAX7219_SCREEN_BUFFER_t
     uint8_t buff[8][8]; //row : unit
 } MAX7219_SCREEN_BUFFER_st;
 
+#define DISPLAY_WIDTH 32u
+#define DISPLAY_HEIGHT 8u
+typedef struct MAX7219_PIXEL_BUFFER_t
+{
+    bool pixel[DISPLAY_WIDTH][DISPLAY_HEIGHT]; //width : hight
+} MAX7219_DISPLAY_PIXEL_st;
+
 void max7219_Init();
 void max7219_SetIntensivity(uint8_t intensivity);
 void max7219_Clean(void);
@@ -121,6 +128,7 @@ void max7219_SendData(uint8_t addr, uint8_t data);
 
 void max7219_SetBuffer(MAX7219_ARRAY_st newBuffer);
 void max7219_DisplayBuffer(void);
+void max7219_SetPixelBuffer(MAX7219_DISPLAY_PIXEL_st pixbuf);
 
 void max7219_TurnOn(void);
 void max7219_TurnOff(void);

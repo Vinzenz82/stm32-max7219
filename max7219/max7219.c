@@ -120,6 +120,25 @@ void max7219_SetBuffer(MAX7219_ARRAY_st newBuffer)
     buffer = newBuffer;
 }
 
+void max7219_SetPixelBuffer(MAX7219_DISPLAY_PIXEL_st pixbuf)
+{
+    uint8_t i = 0u;
+    uint8_t col = 0u;
+
+    for(col = 0; col < 8; col++) {
+        for(i = 0; i<4; i++) { //go through units
+            buffer.Unit[i].raw[col].Led1 = (uint8_t)pixbuf.pixel[0+(i*8)][col];
+            buffer.Unit[i].raw[col].Led2 = (uint8_t)pixbuf.pixel[1+(i*8)][col];
+            buffer.Unit[i].raw[col].Led3 = (uint8_t)pixbuf.pixel[2+(i*8)][col];
+            buffer.Unit[i].raw[col].Led4 = (uint8_t)pixbuf.pixel[3+(i*8)][col];
+            buffer.Unit[i].raw[col].Led5 = (uint8_t)pixbuf.pixel[4+(i*8)][col];
+            buffer.Unit[i].raw[col].Led6 = (uint8_t)pixbuf.pixel[5+(i*8)][col];
+            buffer.Unit[i].raw[col].Led7 = (uint8_t)pixbuf.pixel[6+(i*8)][col];
+            buffer.Unit[i].raw[col].Led8 = (uint8_t)pixbuf.pixel[7+(i*8)][col];
+        }
+    }
+}
+
 void max7219_DisplayBuffer(void)
 {
     uint8_t i = 0, col = 1;
@@ -127,7 +146,7 @@ void max7219_DisplayBuffer(void)
 
     for(col = 1; col < 9; col++) {
         LL_GPIO_ResetOutputPin(MAX7219_CS_GPIO_Port, MAX7219_CS_Pin);
-        for(i = 3; i<7; i++) { //0-4
+        for(i = 0; i<4; i++) { //3-7
             
             max7219_SendDataNoCs(col, buffer.Unit[i].raw[col-1].raw); 
             
