@@ -1,7 +1,6 @@
 // vim: set ai et ts=4 sw=4:
 
 #include <max7219.h>
-#include <max7219_font.h>
 
 // change for your MCU
 #if defined( TM1638_PLATFORM_STM32 )
